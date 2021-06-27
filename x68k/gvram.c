@@ -10,7 +10,7 @@
 #include	"tvram.h"
 #include	"gvram.h"
 #include	"m68000.h"
-#include	"memory.h"
+#include	<string.h>
 
 	BYTE	GVRAM[0x80000];
 	WORD	Grp_LineBuf[1024];

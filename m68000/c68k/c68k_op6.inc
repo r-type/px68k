@@ -4433,7 +4433,7 @@ case 0x61FF:
 case 0x6101:
 {
 	PRE_IO
-	PUSH_32_F(PC - CPU->BasePC)
+	PUSH_32_F((u32)(PC - CPU->BasePC))
 	PC += (s32)(s8)Opcode;
 	POST_IO
 }
@@ -4446,7 +4446,7 @@ case 0x6100:
 	res = (s32)(s16)FETCH_WORD;
 	PC -= CPU->BasePC;
 	PRE_IO
-	PUSH_32_F(PC + 2)
+	PUSH_32_F((u32)PC + 2)
 	PC += (s32) res;
 	SET_PC(PC);
 	POST_IO

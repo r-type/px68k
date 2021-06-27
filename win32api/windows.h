@@ -21,9 +21,16 @@ typedef	unsigned short	USHORT;
 typedef	unsigned int	UINT;
 typedef	unsigned long	ULONG;
 
+#ifdef HAVE_C68k
+#include "/m68000/c68k/core.h"
+typedef	u8	BYTE;
+typedef	u16	WORD;
+typedef	u32	DWORD;
+#else
 typedef	unsigned char	BYTE;
 typedef	unsigned short	WORD;
 typedef	unsigned int	DWORD;
+#endif
 
 typedef	int		BOOL;
 typedef	WORD		WPARAM;
@@ -52,6 +59,10 @@ typedef	HANDLE		HGLOBAL;
 
 typedef	void *		DRAWITEMSTRUCT;
 
+#ifndef FASTCALL
+#define FASTCALL
+#endif
+
 #ifndef	TRUE
 #define	TRUE	1
 #endif
@@ -64,10 +75,6 @@ typedef	void *		DRAWITEMSTRUCT;
 #define	MAX_PATH	MAXPATHLEN
 #endif
 
-#ifndef	max
-#define	max(a,b)	(((a) > (b)) ? (a) : (b))
-#endif
-
 #ifndef	AVE
 #define	AVE(a, b)	(((a)+(b))/2)
 #endif
@@ -77,7 +84,14 @@ typedef	void *		DRAWITEMSTRUCT;
  */
 #define	WINAPI
 #define	CALLBACK
+
+#ifdef __GNUC__
+#ifndef UNUSED
+#define UNUSED __attribute ((unused))
+#endif
+#else
 #define	UNUSED(v)	((void)(v))
+#endif
 
 #ifndef	INLINE
 #define	INLINE	static inline

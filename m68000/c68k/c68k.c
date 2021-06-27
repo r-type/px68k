@@ -147,12 +147,12 @@ void FASTCALL C68k_Add_Cycle(c68k_struc *cpu, s32 cycle)
 // Read / Write dummy functions
 ////////////////////////////////
 
-u32 FASTCALL C68k_Read_Dummy(__attribute ((unused)) const u32 adr)
+u32 FASTCALL C68k_Read_Dummy(UNUSED const u32 adr)
 {
     return 0;
 }
 
-void FASTCALL C68k_Write_Dummy(__attribute ((unused)) const u32 adr, __attribute ((unused)) u32 data)
+void FASTCALL C68k_Write_Dummy(UNUSED const u32 adr, UNUSED u32 data)
 {
 
 }
@@ -259,7 +259,7 @@ u32 C68k_Get_AReg(c68k_struc *cpu, u32 num)
 
 u32 C68k_Get_PC(c68k_struc *cpu)
 {
-    return (cpu->PC - cpu->BasePC);
+    return (u32)(cpu->PC - cpu->BasePC);
 }
 
 u32 C68k_Get_SR(c68k_struc *cpu)

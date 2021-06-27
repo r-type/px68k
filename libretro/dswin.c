@@ -31,10 +31,6 @@
 #include	"mercury.h"
 #include	"fmg_wrap.h"
 
-#include "libretro.h"
-extern retro_audio_sample_batch_t audio_batch_cb;
-extern signed short soundbuf[1024*2];
-
 short	playing = FALSE;
 
 #define PCMBUF_SIZE 2*2*48000
@@ -78,13 +74,19 @@ DSound_Init(unsigned long rate, unsigned long buflen)
 void
 DSound_Play(void)
 {
-   //	if (audio_fd >= 0);
+   	if (audio_fd >= 0) {
+		ADPCM_SetVolume((BYTE)Config.PCM_VOL);
+		OPM_SetVolume((BYTE)Config.OPM_VOL);	
+	}
 }
 
 void
 DSound_Stop(void)
 {
-   //	if (audio_fd >= 0);
+   	if (audio_fd >= 0) {
+		ADPCM_SetVolume(0);
+		OPM_SetVolume(0);	
+	}
 }
 
 int
@@ -217,11 +219,7 @@ cb_start:
          //printf("TYPED: ");
       }
    }
-
-   signed short int *ptr=(signed short int *)buf;
-   memcpy(&soundbuf[0],buf,len);
-   audio_batch_cb(soundbuf,len/4);
-
+   memcpy(userdata, buf, len);
 }
 
 #else	/* NOSOUND */

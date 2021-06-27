@@ -70,9 +70,9 @@ case 0xD000:
 	pointer src;
 	src = (u8)CPU->D[(Opcode >> 0) & 7];
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -152,9 +152,9 @@ case 0xD008:
 	CCnt = 0;
 	goto C68k_Exec_Really_End;
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -234,9 +234,9 @@ case 0xD010:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -310,9 +310,9 @@ case 0xD018:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -386,9 +386,9 @@ case 0xD020:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -470,9 +470,9 @@ case 0xD028:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -554,9 +554,9 @@ case 0xD030:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -582,9 +582,9 @@ case 0xD038:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -610,9 +610,9 @@ case 0xD039:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -633,14 +633,14 @@ case 0xD03A:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -661,14 +661,14 @@ case 0xD03B:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -691,9 +691,9 @@ case 0xD03C:
 	src = FETCH_BYTE;
 	PC += 2;
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -718,9 +718,9 @@ case 0xD01F:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -746,9 +746,9 @@ case 0xD027:
 	PRE_IO
 	READ_BYTE_F(adr, src)
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -826,8 +826,8 @@ case 0xD040:
 	pointer src;
 	src = (u16)CPU->D[(Opcode >> 0) & 7];
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -905,8 +905,8 @@ case 0xD048:
 	pointer src;
 	src = (u16)CPU->A[(Opcode >> 0) & 7];
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -987,8 +987,8 @@ case 0xD050:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1063,8 +1063,8 @@ case 0xD058:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1139,8 +1139,8 @@ case 0xD060:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1223,8 +1223,8 @@ case 0xD068:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1307,8 +1307,8 @@ case 0xD070:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1335,8 +1335,8 @@ case 0xD078:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1363,8 +1363,8 @@ case 0xD079:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1386,13 +1386,13 @@ case 0xD07A:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1414,13 +1414,13 @@ case 0xD07B:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1444,8 +1444,8 @@ case 0xD07C:
 	src = FETCH_WORD;
 	PC += 2;
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1471,8 +1471,8 @@ case 0xD05F:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1499,8 +1499,8 @@ case 0xD067:
 	PRE_IO
 	READ_WORD_F(adr, src)
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -1579,10 +1579,10 @@ case 0xD080:
 	pointer src;
 	src = (u32)CPU->D[(Opcode >> 0) & 7];
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -1659,10 +1659,10 @@ case 0xD088:
 	pointer src;
 	src = (u32)CPU->A[(Opcode >> 0) & 7];
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -1742,10 +1742,10 @@ case 0xD090:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -1819,10 +1819,10 @@ case 0xD098:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -1896,10 +1896,10 @@ case 0xD0A0:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -1981,10 +1981,10 @@ case 0xD0A8:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2066,10 +2066,10 @@ case 0xD0B0:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2095,10 +2095,10 @@ case 0xD0B8:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2124,10 +2124,10 @@ case 0xD0B9:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2148,15 +2148,15 @@ case 0xD0BA:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2177,15 +2177,15 @@ case 0xD0BB:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2208,10 +2208,10 @@ case 0xD0BC:
 	src = FETCH_LONG;
 	PC += 4;
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -2236,10 +2236,10 @@ case 0xD09F:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2265,10 +2265,10 @@ case 0xD0A7:
 	PRE_IO
 	READ_LONG_F(adr, src)
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 	POST_IO
@@ -2349,9 +2349,9 @@ case 0xD110:
 	adr = CPU->A[(Opcode >> 0) & 7];
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2425,9 +2425,9 @@ case 0xD118:
 	CPU->A[(Opcode >> 0) & 7] += 1;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2501,9 +2501,9 @@ case 0xD120:
 	CPU->A[(Opcode >> 0) & 7] = adr;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2585,9 +2585,9 @@ case 0xD128:
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2669,9 +2669,9 @@ case 0xD130:
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2697,9 +2697,9 @@ case 0xD138:
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2725,9 +2725,9 @@ case 0xD139:
 	PC += 4;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2753,9 +2753,9 @@ case 0xD11F:
 	CPU->A[7] += 2;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2781,9 +2781,9 @@ case 0xD127:
 	CPU->A[7] = adr;
 	PRE_IO
 	READ_BYTE_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ = res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -2864,8 +2864,8 @@ case 0xD150:
 	adr = CPU->A[(Opcode >> 0) & 7];
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -2940,8 +2940,8 @@ case 0xD158:
 	CPU->A[(Opcode >> 0) & 7] += 2;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3016,8 +3016,8 @@ case 0xD160:
 	CPU->A[(Opcode >> 0) & 7] = adr;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3100,8 +3100,8 @@ case 0xD168:
 	PC += 2;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3184,8 +3184,8 @@ case 0xD170:
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3212,8 +3212,8 @@ case 0xD178:
 	PC += 2;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3240,8 +3240,8 @@ case 0xD179:
 	PC += 4;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3268,8 +3268,8 @@ case 0xD15F:
 	CPU->A[7] += 2;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3296,8 +3296,8 @@ case 0xD167:
 	CPU->A[7] = adr;
 	PRE_IO
 	READ_WORD_F(adr, dst)
-	res = dst + src;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)(dst + src);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ = res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -3379,10 +3379,10 @@ case 0xD190:
 	adr = CPU->A[(Opcode >> 0) & 7];
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3456,10 +3456,10 @@ case 0xD198:
 	CPU->A[(Opcode >> 0) & 7] += 4;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3533,10 +3533,10 @@ case 0xD1A0:
 	CPU->A[(Opcode >> 0) & 7] = adr;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3618,10 +3618,10 @@ case 0xD1A8:
 	PC += 2;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3703,10 +3703,10 @@ case 0xD1B0:
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3732,10 +3732,10 @@ case 0xD1B8:
 	PC += 2;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3761,10 +3761,10 @@ case 0xD1B9:
 	PC += 4;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3790,10 +3790,10 @@ case 0xD19F:
 	CPU->A[7] += 4;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3819,10 +3819,10 @@ case 0xD1A7:
 	CPU->A[7] = adr;
 	PRE_IO
 	READ_LONG_F(adr, dst)
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->flag_notZ = res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -3900,9 +3900,9 @@ case 0xD100:
 	pointer src;
 	src = (u8)CPU->D[(Opcode >> 0) & 7];
 	dst = (u8)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ |= res & 0xFF;
 	*(BYTE_OFF + (u8*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -3979,8 +3979,8 @@ case 0xD140:
 	pointer src;
 	src = (u16)CPU->D[(Opcode >> 0) & 7];
 	dst = (u16)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ |= res & 0xFFFF;
 	*(WORD_OFF + (u16*)(&CPU->D[(Opcode >> 9) & 7])) = res;
@@ -4058,10 +4058,10 @@ case 0xD180:
 	pointer src;
 	src = (u32)CPU->D[(Opcode >> 0) & 7];
 	dst = (u32)CPU->D[(Opcode >> 9) & 7];
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_notZ |= res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((((u32)src & 1) + ((u32)dst & 1) + (((CPU->flag_X >> 8) & 1) & 1)) >> 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	*((u32*)(&CPU->D[(Opcode >> 9) & 7])) = res;
 }
@@ -4129,9 +4129,9 @@ case 0xD108:
 	adr = CPU->A[(Opcode >> 9) & 7] - 1;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_BYTE_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ |= res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -4200,8 +4200,8 @@ case 0xD148:
 	adr = CPU->A[(Opcode >> 9) & 7] - 2;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_WORD_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ |= res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -4271,10 +4271,10 @@ case 0xD188:
 	adr = CPU->A[(Opcode >> 9) & 7] - 4;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_LONG_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_notZ |= res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((((u32)src & 1) + ((u32)dst & 1) + (((CPU->flag_X >> 8) & 1) & 1)) >> 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -4301,9 +4301,9 @@ case 0xD10F:
 	adr = CPU->A[(Opcode >> 9) & 7] - 1;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_BYTE_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ |= res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -4330,8 +4330,8 @@ case 0xD14F:
 	adr = CPU->A[(Opcode >> 9) & 7] - 2;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_WORD_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ |= res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -4359,10 +4359,10 @@ case 0xD18F:
 	adr = CPU->A[(Opcode >> 9) & 7] - 4;
 	CPU->A[(Opcode >> 9) & 7] = adr;
 	READ_LONG_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_notZ |= res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((((u32)src & 1) + ((u32)dst & 1) + (((CPU->flag_X >> 8) & 1) & 1)) >> 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -4389,9 +4389,9 @@ case 0xDF08:
 	adr = CPU->A[7] - 2;
 	CPU->A[7] = adr;
 	READ_BYTE_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ |= res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -4418,8 +4418,8 @@ case 0xDF48:
 	adr = CPU->A[7] - 2;
 	CPU->A[7] = adr;
 	READ_WORD_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ |= res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -4447,10 +4447,10 @@ case 0xDF88:
 	adr = CPU->A[7] - 4;
 	CPU->A[7] = adr;
 	READ_LONG_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_notZ |= res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((((u32)src & 1) + ((u32)dst & 1) + (((CPU->flag_X >> 8) & 1) & 1)) >> 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -4471,9 +4471,9 @@ case 0xDF0F:
 	adr = CPU->A[7] - 2;
 	CPU->A[7] = adr;
 	READ_BYTE_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res;
-	CPU->flag_V = (src ^ res) & (dst ^ res);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res));
 	CPU->flag_notZ |= res & 0xFF;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -4494,8 +4494,8 @@ case 0xDF4F:
 	adr = CPU->A[7] - 2;
 	CPU->A[7] = adr;
 	READ_WORD_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
+	CPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;
 	CPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;
 	CPU->flag_notZ |= res & 0xFFFF;
 	WRITE_WORD_F(adr, res)
@@ -4517,10 +4517,10 @@ case 0xDF8F:
 	adr = CPU->A[7] - 4;
 	CPU->A[7] = adr;
 	READ_LONG_F(adr, dst)
-	res = dst + src + ((CPU->flag_X >> 8) & 1);
+	res = (u32)dst + (u32)src + ((CPU->flag_X >> 8) & 1);
 	CPU->flag_notZ |= res;
-	CPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;
-	CPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;
+	CPU->flag_X = CPU->flag_C = (((((u32)src & 1) + ((u32)dst & 1) + (((CPU->flag_X >> 8) & 1) & 1)) >> 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;
+	CPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;
 	CPU->flag_N = res >> 24;
 	WRITE_LONG_F(adr, res)
 	POST_IO
@@ -4598,7 +4598,7 @@ case 0xD0C0:
 	pointer src;
 	src = (s32)(s16)CPU->D[(Opcode >> 0) & 7];
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(8)
@@ -4674,7 +4674,7 @@ case 0xD0C8:
 	pointer src;
 	src = (s32)(s16)CPU->A[(Opcode >> 0) & 7];
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(8)
@@ -4753,7 +4753,7 @@ case 0xD0D0:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -4826,7 +4826,7 @@ case 0xD0D8:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -4899,7 +4899,7 @@ case 0xD0E0:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -4980,7 +4980,7 @@ case 0xD0E8:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5061,7 +5061,7 @@ case 0xD0F0:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5086,7 +5086,7 @@ case 0xD0F8:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5111,7 +5111,7 @@ case 0xD0F9:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5131,12 +5131,12 @@ case 0xD0FA:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5156,12 +5156,12 @@ case 0xD0FB:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5183,7 +5183,7 @@ case 0xD0FC:
 	src = (s32)(s16)FETCH_WORD;
 	PC += 2;
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(12)
@@ -5207,7 +5207,7 @@ case 0xD0DF:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5232,7 +5232,7 @@ case 0xD0E7:
 	PRE_IO
 	READSX_WORD_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5309,7 +5309,7 @@ case 0xD1C0:
 	pointer src;
 	src = (s32)(s32)CPU->D[(Opcode >> 0) & 7];
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(6)
@@ -5385,7 +5385,7 @@ case 0xD1C8:
 	pointer src;
 	src = (s32)(s32)CPU->A[(Opcode >> 0) & 7];
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(6)
@@ -5464,7 +5464,7 @@ case 0xD1D0:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5537,7 +5537,7 @@ case 0xD1D8:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5610,7 +5610,7 @@ case 0xD1E0:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5691,7 +5691,7 @@ case 0xD1E8:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5772,7 +5772,7 @@ case 0xD1F0:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5797,7 +5797,7 @@ case 0xD1F8:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5822,7 +5822,7 @@ case 0xD1F9:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5842,12 +5842,12 @@ case 0xD1FA:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5867,12 +5867,12 @@ case 0xD1FB:
 	u32 res;
 	pointer dst;
 	pointer src;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5894,7 +5894,7 @@ case 0xD1FC:
 	src = (s32)(s32)FETCH_LONG;
 	PC += 4;
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 }
 RET(14)
@@ -5918,7 +5918,7 @@ case 0xD1DF:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }
@@ -5943,7 +5943,7 @@ case 0xD1E7:
 	PRE_IO
 	READSX_LONG_F(adr, src)
 	dst = (u32)CPU->A[(Opcode >> 9) & 7];
-	res = dst + src;
+	res = (u32)(dst + src);
 	CPU->A[(Opcode >> 9) & 7] = res;
 	POST_IO
 }

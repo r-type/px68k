@@ -43,23 +43,20 @@ extern int realdisp_w, realdisp_h;
 #endif
 
 int WinX68k_Reset(void);
+int pmain(int argc, char *argv[]);
+void end_loop_retro(void);
+void exec_app_retro();
+
 
 #ifndef	winx68k_gtkwarpper_h
 #define	winx68k_gtkwarpper_h
 
+#ifdef _WIN32
+#include <direct.h>
+#else
 #include <unistd.h>
-#include <signal.h>
-
-#if 0
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
-
-extern GtkWidget *window;
-extern GtkWidget *main_vbox;
-extern GtkWidget *menubar;
-extern GtkWidget *drawarea;
-extern GdkPixmap *splash_pixmap;
 #endif
+#include <signal.h>
 
 BOOL is_installed_idle_process(void);
 void install_idle_process(void);

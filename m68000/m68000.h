@@ -9,12 +9,13 @@
 #ifndef M68000_H
 #define M68000_H
 
-#ifndef CYCLONE
-#include "c68k/c68k.h"
-#else
 #include "common.h"
+
+#if defined (HAVE_CYCLONE)
 #include "cyclone.h"
-#endif
+#elif defined (HAVE_C68K)
+#include "c68k/c68k.h"
+#endif /* HAVE_C68K */
 
 // MAME互換のレジスタ番号 (一部未対応)
 enum

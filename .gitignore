@@ -11,3 +11,5 @@ px68k-ios/px68k-ios.xcodeproj/xcuserdata
 *.o
 *.so
 *.dll
+libretro/libs
+libretro/obj

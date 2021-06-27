@@ -220,7 +220,7 @@ LPSTR
 file_getcd(LPSTR filename)
 {
 
-	strncpy(curfilep, filename, curfilep - curpath);
+	strncpy(curfilep, filename, MAX_PATH - (curfilep - curpath));
 	return curpath;
 }
 
@@ -228,7 +228,7 @@ FILEH
 file_open_c(LPSTR filename)
 {
 
-	strncpy(curfilep, filename, curfilep - curpath);
+	strncpy(curfilep, filename, MAX_PATH - (curfilep - curpath));
 	return file_open(curpath);
 }
 
@@ -236,7 +236,7 @@ FILEH
 file_create_c(LPSTR filename, int ftype)
 {
 
-	strncpy(curfilep, filename, curfilep - curpath);
+	strncpy(curfilep, filename, MAX_PATH - (curfilep - curpath));
 	return file_create(curpath, ftype);
 }
 
@@ -244,7 +244,7 @@ short
 file_attr_c(LPSTR filename)
 {
 
-	strncpy(curfilep, filename, curfilep - curpath);
+	strncpy(curfilep, filename, MAX_PATH - (curfilep - curpath));
 	return file_attr(curpath);
 }
 

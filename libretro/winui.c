@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2003,2008 NONAKA Kimihiro
  * All rights reserved.
  *
@@ -100,32 +100,46 @@ struct menu_flist mfl;
 
 /***** menu items *****/
 
-#define MENU_NUM 13
+#define MENU_NUM 5 //13
 #define MENU_WINDOW 7
 
-int mval_y[] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 1, 1};
+int mval_y[] = {
+	0,
+	0,
+	0,
+	0,
+	0
+};
 
-enum menu_id {M_SYS, M_JOM, M_FD0, M_FD1, M_HD0, M_HD1, M_FS, M_SR, M_VKS, M_VBS, M_HJS, M_NW, M_JK};
+enum menu_id {
+	M_SYS,
+	M_FD0,
+	M_FD1,
+	M_HD0,
+	M_HD1
+};
 
 // Max # of characters is 15.
-char menu_item_key[][15] = {"SYSTEM", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1", "Frame Skip", "Sound Rate", "VKey Size", "VBtn Swap", "HwJoy Setting", "No Wait Mode", "JoyKey", "uhyo", ""};
+char menu_item_key[][15] = {
+	"SYSTEM",
+	"FDD0",
+	"FDD1",
+	"HDD0",
+	"HDD1",
+	"",
+	"",
+	"uhyo",
+	""
+};
 
 // Max # of characters is 30.
 // Max # of items including terminater `""' in each line is 15.
 char menu_items[][15][30] = {
 	{"RESET", "NMI RESET", "QUIT", ""},
-	{"Joystick", "Mouse", ""},
 	{"dummy", "EJECT", ""},
 	{"dummy", "EJECT", ""},
 	{"dummy", "EJECT", ""},
-	{"dummy", "EJECT", ""},
-	{"Auto Frame Skip", "Full Frame", "1/2 Frame", "1/3 Frame", "1/4 Frame", "1/5 Frame", "1/6 Frame", "1/8 Frame", "1/16 Frame", "1/32 Frame", "1/60 Frame", ""},
-	{"No Sound", "11025Hz", "22050Hz", "44100Hz", "48000Hz", ""},
-	{"Ultra Huge", "Super Huge", "Huge", "Large", "Medium", "Small", ""},
-	{"TRIG1 TRIG2", "TRIG2 TRIG1", ""},
-	{"Axis0: xx", "Axis1: xx", "Hat: xx", "Button0: xx", "Button1: xx",  ""},
-	{"Off", "On", ""},
-	{"Off", "On", ""}
+	{"dummy", "EJECT", ""}
 };
 
 static void menu_system(int v);
@@ -145,19 +159,11 @@ struct _menu_func {
 };
 
 struct _menu_func menu_func[] = {
-	{menu_system, 0}, 
-	{menu_joy_or_mouse, 1},
+	{menu_system, 0},
 	{menu_create_flist, 0},
 	{menu_create_flist, 0},
 	{menu_create_flist, 0},
-	{menu_create_flist, 0},
-	{menu_frame_skip, 1},
-	{menu_sound_rate, 1},
-	{menu_vkey_size, 1},
-	{menu_vbtn_swap, 1},
-	{menu_hwjoy_setting, 0},
-	{menu_nowait, 1},
-	{menu_joykey, 1}
+	{menu_create_flist, 0}
 };
 
 int WinUI_get_drv_num(int key)
@@ -175,7 +181,7 @@ int WinUI_get_drv_num(int key)
 
 static void menu_hwjoy_print(int v)
 {
-	if (v <= 1) {
+	/*if (v <= 1) {
 		sprintf(menu_items[M_HJS][v], "Axis%d(%s): %d",
 			v,
 			(v == 0)? "Left/Right" : "Up/Down",
@@ -186,7 +192,7 @@ static void menu_hwjoy_print(int v)
 		sprintf(menu_items[M_HJS][v], "Button%d: %d",
 			v - 3,
 			Config.HwJoyBtn[v - 3]);
-	}
+	}*/
 }
 
 /******************************************************************************
@@ -197,44 +203,9 @@ WinUI_Init(void)
 {
 	int i;
 
-	mval_y[M_JOM] = Config.JoyOrMouse;
-	if (Config.FrameRate == 7) {
-		mval_y[M_FS] = 0;
-	} else if (Config.FrameRate == 8) {
-		mval_y[M_FS] = 7;
-	} else if (Config.FrameRate == 16) {
-		mval_y[M_FS] = 8;
-	} else if (Config.FrameRate == 32) {
-		mval_y[M_FS] = 9;
-	} else if (Config.FrameRate == 60) {
-		mval_y[M_FS] = 10;
-	} else {
-		mval_y[M_FS] = Config.FrameRate;
-	}
-
-	if (Config.SampleRate == 0) {
-		mval_y[M_SR] = 0;
-	} else if (Config.SampleRate == 11025) {
-		mval_y[M_SR] = 1;
-	} else if (Config.SampleRate == 22050) {
-		mval_y[M_SR] = 2;
-	} else if (Config.SampleRate == 44100) {
-		mval_y[M_SR] = 3;
-	} else if (Config.SampleRate == 48000) {
-		mval_y[M_SR] = 4;
-	} else {
-		mval_y[M_SR] = 1;
-	}
-
-	mval_y[M_VKS] = Config.VkeyScale;
-	mval_y[M_VBS] = Config.VbtnSwap;
-
 	for (i = 0; i < 11; i++) {
 		menu_hwjoy_print(i);
 	}
-
-	mval_y[M_NW] = Config.NoWaitMode;
-	mval_y[M_JK] = Config.JoyKey;
 
 #if defined(ANDROID)
 #define CUR_DIR_STR winx68k_dir
@@ -369,6 +340,27 @@ static void upper(char *s)
 	}
 }
 
+static void switch_mfl(int a, int b)
+{
+	// exchange 2 values in mfl list
+	char name_tmp[MAX_PATH];
+	char type_tmp;
+
+	strcpy(name_tmp, mfl.name[a]);
+	type_tmp = mfl.type[a];
+
+	strcpy(mfl.name[a], mfl.name[b]);
+	mfl.type[a] = mfl.type[b];
+
+	strcpy(mfl.name[b], name_tmp);
+	mfl.type[b] = type_tmp;
+}
+
+#ifdef __LIBRETRO__
+extern char slash;
+extern char base_dir[MAX_PATH];
+#endif
+
 static void menu_create_flist(int v)
 {
 	int drv;
@@ -376,7 +368,7 @@ static void menu_create_flist(int v)
 	char support[] = "D8888DHDMDUP2HDDIMXDFIMG";
 
 	drv = WinUI_get_drv_num(mkey_y);
-	p6logd("*** drv:%d ***** %s \n", drv, mfl.dir[drv]);
+
 	if (drv < 0) {
 		return;
 	}
@@ -408,6 +400,18 @@ static void menu_create_flist(int v)
 	dp = opendir(mfl.dir[drv]);
 
 	// xxx check if dp is null...
+	if (!dp) {
+		char tmp[PATH_MAX];
+		/* failed to open StartDir, use rom folder as default */
+		/* TODO: check for path more early */
+		p6logd("Error opening StartDir, using rom path instead...\n");
+		snprintf(tmp, sizeof(tmp), "%s%c", base_dir, slash);
+		strcpy(mfl.dir[drv], tmp);
+		/* re-open folder */
+		dp = opendir(mfl.dir[drv]);
+	}
+
+	p6logd("*** drv:%d ***** %s \n", drv, mfl.dir[drv]);
 
 	// xxx You can get only MFL_MAX files.
 	for (i = 0 ; i < MFL_MAX; i++) {
@@ -451,7 +455,9 @@ static void menu_create_flist(int v)
 		strcpy(mfl.name[i], n);
 		// set 1 if this is directory
 		mfl.type[i] = S_ISDIR(buf.st_mode)? 1 : 0;
-		printf("%s 0x%x\n", n, buf.st_mode);
+#ifdef DEBUG
+		p6logd("%s 0x%x\n", n, buf.st_mode);
+#endif
 	}
 
 	closedir(dp);
@@ -459,6 +465,18 @@ static void menu_create_flist(int v)
 	strcpy(mfl.name[i], "");
 	mfl.num = i;
 	mfl.ptr = 0;
+
+	// Sorting mfl!
+	// Folder first, than files
+	// buble sort glory
+	for (int a=0; a<i-1; a++) {
+		for (int b=a+1; b<i; b++) {
+			if (mfl.type[a]<mfl.type[b])
+				switch_mfl(a, b);
+			if ((mfl.type[a]==mfl.type[b]) && (strcasecmp(mfl.name[a], mfl.name[b])>0))
+				switch_mfl(a, b);
+		}
+	}
 }
 
 static void menu_frame_skip(int v)
@@ -518,9 +536,6 @@ static void menu_joykey(int v)
 	Config.JoyKey = v;
 }
 
-#ifdef __LIBRETRO__
-extern char slash;
-#endif
 // ex. ./hoge/.. -> ./
 // ( ./ ---down hoge dir--> ./hoge ---up hoge dir--> ./hoge/.. )
 static void shortcut_dir(int drv)
@@ -553,6 +568,8 @@ static void shortcut_dir(int drv)
 	}
 }
 
+int speedup_joy[0xff] = {0};
+
 int WinUI_Menu(int first)
 {
 	int i, n;
@@ -578,6 +595,14 @@ int WinUI_Menu(int first)
 	joy = get_joy_downstate();
 	reset_joy_downstate();
 
+	if (speedup_joy[JOY_RIGHT])
+		joy &= ~JOY_RIGHT;
+	if (speedup_joy[JOY_LEFT])
+		joy &= ~JOY_LEFT;
+	if (speedup_joy[JOY_UP])
+		joy &= ~JOY_UP;
+	if (speedup_joy[JOY_DOWN])
+		joy &= ~JOY_DOWN;
 
 	if (!(joy & JOY_UP)) {
 		switch (menu_state) {
@@ -643,9 +668,87 @@ int WinUI_Menu(int first)
 				}
 			} else if (mfl.y + 1 < mfl.num) {
 				mfl.y++;
-				printf("mfl.y %d\n", mfl.y);
+#ifdef DEBUG
+				p6logd("mfl.y %d\n", mfl.y);
+#endif
 			}
 			mfile_redraw = 1;
+			break;
+		}
+	}
+
+	if (!(joy & JOY_LEFT)) {
+		switch (menu_state) {
+		case ms_key:
+			break;
+		case ms_value:
+			if (mval_y[mkey_y] > 0) {
+				mval_y[mkey_y]-=10;
+				if (mval_y[mkey_y]<0)
+					mval_y[mkey_y] = 0;
+
+				// do something immediately
+				if (menu_func[mkey_y].imm) {
+					menu_func[mkey_y].func(mval_y[mkey_y]);
+				}
+
+				menu_redraw = 1;
+			}
+			break;
+		case ms_file:
+			if (mfl.y == 0) {
+				if (mfl.ptr > 0) {
+					mfl.ptr-=10;
+					if (mfl.ptr < 0 )
+						mfl.ptr = 0;
+				}
+			} else {
+				mfl.y-=10;
+				if (mfl.y<0) {
+					if (mfl.ptr > 0)
+						mfl.ptr += mfl.y;
+					if (mfl.ptr < 0)
+						mfl.ptr = 0;
+					mfl.y = 0;
+				}
+			}
+			mfile_redraw = 1;
+			break;
+		}
+	}
+
+	if (!(joy & JOY_RIGHT)) {
+		switch (menu_state) {
+		case ms_key:
+			break;
+		case ms_value:
+			for (int ii = 0; ii<10; ii++) {
+				if (menu_items[mkey_y][mval_y[mkey_y] + 1][0] != '\0') {
+					mval_y[mkey_y]++;
+
+					if (menu_func[mkey_y].imm) {
+						menu_func[mkey_y].func(mval_y[mkey_y]);
+					}
+
+					menu_redraw = 1;
+				}
+			}
+			break;
+		case ms_file:
+			for (int ii=0; ii<10; ii++) {
+				if (mfl.y == 13) {
+					if (mfl.ptr + 14 < mfl.num
+					    && mfl.ptr < MFL_MAX - 13) {
+						mfl.ptr++;
+					}
+				} else if (mfl.y + 1 < mfl.num) {
+					mfl.y++;
+#ifdef DEBUG
+					printf("mfl.y %d\n", mfl.y);
+#endif
+				}
+				mfile_redraw = 1;
+			}
 			break;
 		}
 	}
@@ -671,17 +774,25 @@ int WinUI_Menu(int first)
 			menu_redraw = 1;
 
 			drv = WinUI_get_drv_num(mkey_y);
-			printf("**** drv:%d *****\n", drv);
+			p6logd("**** drv:%d *****\n", drv);
 			if (drv >= 0) {
 				if (mval_y[mkey_y] == 0) {
 					// go file_mode
-					printf("hoge:%d", mval_y[mkey_y]);
+					p6logd("hoge:%d\n", mval_y[mkey_y]);
 					menu_state = ms_file;
 					menu_redraw = 0; //reset
 					mfile_redraw = 1;
 				} else { // mval_y[mkey_y] == 1
 					// FDD_EjectFD() is done, so set 0.
 					mval_y[mkey_y] = 0;
+					// 11-19-17 added for libretro logging
+					switch (drv)
+					{
+						case 0: p6logd("fdd0 ejected...\n", drv); break;
+						case 1: p6logd("fdd1 ejected...\n", drv); break;
+						case 2: p6logd("hdd0 ejected...\n", drv); break;
+						case 3: p6logd("hdd1 ejected...\n", drv); break;
+					}
 				}
 			} else if (!strcmp("SYSTEM", menu_item_key[mkey_y])) {
 				if (mval_y[mkey_y] == 2) {
@@ -692,16 +803,21 @@ int WinUI_Menu(int first)
 			break;
 		case ms_file:
 			drv = WinUI_get_drv_num(mkey_y);
-			printf("***** drv:%d *****\n", drv);
+			p6logd("***** drv:%d *****\n", drv);
 			if (drv < 0) {
-				break; 
+				break;
 			}
 			y = mfl.ptr + mfl.y;
-			p6logd("file slect %s\n", mfl.name[y]);
+			// file loaded
+			// p6logd("file selected: %s\n", mfl.name[y]);
 			if (mfl.type[y]) {
 				// directory operation
 				if (!strcmp(mfl.name[y], "..")) {
 					shortcut_dir(drv);
+					mfl.stack[0][mfl.stackptr] = mfl.stack[1][mfl.stackptr] = 0;
+					mfl.stackptr = (mfl.stackptr - 1) % 256;
+					mfl.ptr = mfl.stack[0][mfl.stackptr];
+					mfl.y = mfl.stack[1][mfl.stackptr];
 				} else {
 					strcat(mfl.dir[drv], mfl.name[y]);
 #ifdef _WIN32
@@ -709,11 +825,18 @@ int WinUI_Menu(int first)
 #else
 					strcat(mfl.dir[drv], "/");
 #endif
+					mfl.stack[0][mfl.stackptr] = mfl.ptr;
+					mfl.stack[1][mfl.stackptr] = mfl.y;
+					mfl.stackptr = (mfl.stackptr + 1) % 256;
+					mfl.ptr = 0;
+					mfl.y = 0;
 				}
+				p6logd("directory selected: %s\n", mfl.name[y]);
 				menu_func[mkey_y].func(0);
 				mfile_redraw = 1;
 			} else {
 				// file operation
+				p6logd("file selected: %s\n", mfl.name[y]);
 				if (strlen(mfl.name[y]) != 0) {
 					char tmpstr[MAX_PATH];
 					strcpy(tmpstr, mfl.dir[drv]);
@@ -728,8 +851,8 @@ int WinUI_Menu(int first)
 				menu_state = ms_key;
 				menu_redraw = 1;
 			}
-			mfl.y = 0;
-			mfl.ptr = 0;
+			mfl.ptr = mfl.stack[0][mfl.stackptr];
+			mfl.y = mfl.stack[1][mfl.stackptr];
 			break;
 		case ms_hwjoy_set:
 			// Go back keymode

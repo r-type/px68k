@@ -29,7 +29,7 @@ BYTE FASTCALL Joystick_Read(BYTE num);
 void FASTCALL Joystick_Write(BYTE num, BYTE data);
 
 typedef signed int R_Keycode;
-void FASTCALL Joystick_Update(int is_menu, R_Keycode key);
+void FASTCALL Joystick_Update(int is_menu, R_Keycode key, int port);
 
 
 BYTE get_joy_downstate(void);
@@ -37,8 +37,8 @@ void reset_joy_downstate(void);
 BYTE get_joy_upstate(void);
 void reset_joy_upstate(void);
 
-
 extern BYTE JoyKeyState;
+extern BYTE keyb_in, joy_in;
 
 extern int  *r_joy;
 

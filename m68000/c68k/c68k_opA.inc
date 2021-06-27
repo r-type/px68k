@@ -4108,7 +4108,7 @@ case 0xA000:
 	res = C68K_1010_EX;
 	CCnt -= c68k_exception_cycle_table[res];
 	PRE_IO
-	PUSH_32_F(PC - CPU->BasePC)
+	PUSH_32_F((u32)(PC - CPU->BasePC))
 	PUSH_16_F(GET_SR)
 	CPU->flag_S = C68K_SR_S;
 	READ_LONG_F(res * 4, PC)

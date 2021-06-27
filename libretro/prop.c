@@ -24,7 +24,7 @@
  */
 
 /* -------------------------------------------------------------------------- *
- *  PROP.C - ≥∆ºÔ¿ﬂƒÍÕ—•◊•Ì•—•∆•£•∑°º•»§»¿ﬂƒÍ√Õ¥…Õ˝                           *
+ *  PROP.C - ÂêÑÁ®ÆË®≠ÂÆöÁî®„Éó„É≠„Éë„ÉÜ„Ç£„Ç∑„Éº„Éà„Å®Ë®≠ÂÆöÂÄ§ÁÆ°ÁêÜ                           *
  * -------------------------------------------------------------------------- */
 
 #include <sys/stat.h>
@@ -143,8 +143,8 @@ set_modulepath(char *path, size_t len)
 	char *homepath;
 
 #ifdef __LIBRETRO__
-        puts("Libretro...");
-        sprintf(path,retro_system_conf);
+        p6logd("Libretro...\n");
+        strcpy(path,retro_system_conf);
         sprintf(winx68k_ini, "%s%cconfig",retro_system_conf,slash);
         return 0;
 #endif
@@ -185,6 +185,7 @@ void LoadConfig(void)
 	char	buf[CFGLEN];
 	FILEH fp;
 
+	Config.MenuFontSize = 0; // start with default normal menu size
 	winx = GetPrivateProfileInt(ini_title, "WinPosX", 0, winx68k_ini);
 	winy = GetPrivateProfileInt(ini_title, "WinPosY", 0, winx68k_ini);
 
@@ -275,7 +276,7 @@ void LoadConfig(void)
 
 	Config.VbtnSwap = GetPrivateProfileInt(ini_title, "VbtnSwap", 0, winx68k_ini);
 
-	Config.JoyOrMouse = GetPrivateProfileInt(ini_title, "JoyOrMouse", 0, winx68k_ini);
+	Config.JoyOrMouse = GetPrivateProfileInt(ini_title, "JoyOrMouse", 1, winx68k_ini);
 
 	Config.HwJoyAxis[0] = GetPrivateProfileInt(ini_title, "HwJoyAxis0", 0, winx68k_ini);
 
@@ -299,15 +300,19 @@ void LoadConfig(void)
 		}
 	}
 
-	for (i = 0; i < 2; i++) {
-		sprintf(buf, "FDD%d", i);
-		GetPrivateProfileString(ini_title, buf, "", Config.FDDImage[i], MAX_PATH, winx68k_ini);
-	}
-
-	for (i=0; i<16; i++)
+	if (Config.disk_path)
 	{
-		sprintf(buf, "HDD%d", i);
-		GetPrivateProfileString(ini_title, buf, "", Config.HDImage[i], MAX_PATH, winx68k_ini);
+		for (i = 0; i < 2; i++) {
+			sprintf(buf, "FDD%d", i);
+			GetPrivateProfileString(ini_title, buf, "", Config.FDDImage[i], MAX_PATH, winx68k_ini);
+		}
+
+
+		for (i=0; i<16; i++)
+		{
+			sprintf(buf, "HDD%d", i);
+			GetPrivateProfileString(ini_title, buf, "", Config.HDImage[i], MAX_PATH, winx68k_ini);
+		}
 	}
 
 #if 0
@@ -435,17 +440,20 @@ void SaveConfig(void)
 		}
 	}
 
-	for (i = 0; i < 2; i++)
+	if (Config.disk_path)
 	{
-		printf("i: %d", i);
-		sprintf(buf, "FDD%d", i);
-		WritePrivateProfileString(ini_title, buf, Config.FDDImage[i], winx68k_ini);
-	}
+		for (i = 0; i < 2; i++)
+		{
+			/* printf("i: %d", i); */
+			sprintf(buf, "FDD%d", i);
+			WritePrivateProfileString(ini_title, buf, Config.FDDImage[i], winx68k_ini);
+		}
 
-	for (i=0; i<16; i++)
-	{
-		sprintf(buf, "HDD%d", i);
-		WritePrivateProfileString(ini_title, buf, Config.HDImage[i], winx68k_ini);
+		for (i=0; i<16; i++)
+		{
+			sprintf(buf, "HDD%d", i);
+			WritePrivateProfileString(ini_title, buf, Config.HDImage[i], winx68k_ini);
+		}
 	}
 
 #if 0
@@ -560,7 +568,7 @@ PropPage_Init(void)
 	    gtk_label_new("Others"));
 	gtk_widget_show(note);
 
-	/* •⁄°º•∏≤º…Ù•‹•ø•Û */
+	/* „Éö„Éº„Ç∏‰∏ãÈÉ®„Éú„Çø„É≥ */
 	ok_button = gtk_button_new_with_label("OK");
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), ok_button,
 	    1, 2, 9, 10);

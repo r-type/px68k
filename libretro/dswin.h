@@ -14,4 +14,6 @@ void DS_SetVolumeOPM(long vol);
 void DS_SetVolumeADPCM(long vol);
 void DS_SetVolumeMercury(long vol);
 
+void raudio_callback(void *userdata, unsigned char *stream, int len);
+
 #endif /* dswin_h__ */

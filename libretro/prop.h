@@ -53,6 +53,18 @@ typedef struct
 	int HwJoyBtn[8];
 	int NoWaitMode;
 	BYTE FrameRate;
+	int MenuFontSize; // font size of menu, 0 = normal, 1 = large
+	int joy1_select_mapping; /* used for keyboard to joypad map for P1 Select */
+	int disk_path;
+	/* Cpu clock in MHz */
+	int clockmhz;
+	/* RAM Size = size * 1024 * 1024 */
+	int ram_size;
+	/* Set controller type for each player to use
+	 * 0 = Standard 2-buttons gamepad
+	 * 1 = CPSF-MD (8 Buttons
+	 * 2 = CPSF-SFC (8 Buttons) */
+	int JOY_TYPE[2];
 } Win68Conf;
 
 extern Win68Conf Config;

@@ -4468,7 +4468,7 @@ case 0x103A:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4493,7 +4493,7 @@ case 0x10BA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4518,7 +4518,7 @@ case 0x10FA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4544,7 +4544,7 @@ case 0x113A:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4571,7 +4571,7 @@ case 0x117A:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4598,7 +4598,7 @@ case 0x11BA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4618,7 +4618,7 @@ case 0x11FA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4638,7 +4638,7 @@ case 0x13FA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4658,7 +4658,7 @@ case 0x1EFA:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4678,7 +4678,7 @@ case 0x1F3A:
 {
 	u32 adr;
 	u32 res;
-	adr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
+	adr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;
 	PC += 2;
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4705,7 +4705,7 @@ case 0x103B:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4730,7 +4730,7 @@ case 0x10BB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4755,7 +4755,7 @@ case 0x10FB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4781,7 +4781,7 @@ case 0x113B:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4808,7 +4808,7 @@ case 0x117B:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4835,7 +4835,7 @@ case 0x11BB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4855,7 +4855,7 @@ case 0x11FB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4875,7 +4875,7 @@ case 0x13FB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4895,7 +4895,7 @@ case 0x1EFB:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)
@@ -4915,7 +4915,7 @@ case 0x1F3B:
 {
 	u32 adr;
 	u32 res;
-	adr = PC - CPU->BasePC;
+	adr = (u32)(PC - CPU->BasePC);
 	DECODE_EXT_WORD
 	PRE_IO
 	READ_BYTE_F(adr, res)

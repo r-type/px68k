@@ -8,6 +8,7 @@ extern	DWORD	LastClock[4];
 
 extern char cur_dir_str[];
 extern int cur_dir_slen;
+extern int speedup_joy[0xff];
 
 void WinUI_Init(void);
 int WinUI_Menu(int first);
@@ -19,7 +20,7 @@ void send_key(void);
 
 enum MenuState {ms_key, ms_value, ms_file, ms_hwjoy_set};
 
-#define MFL_MAX 1000
+#define MFL_MAX 4000
 
 struct menu_flist {
 	char name[MFL_MAX][MAX_PATH];
@@ -28,6 +29,8 @@ struct menu_flist {
 	int ptr;
 	int num;
 	int y;
+	int stack[2][MFL_MAX];
+	int stackptr;
 };
 
 extern char menu_item_key[][15];

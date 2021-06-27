@@ -16,7 +16,7 @@
 
 #if M68000_BUILDING_MAME
 
-#include "memory.h"
+#include <string.h>
 #define m68k_read_memory_8(address)  Memory_ReadB(address)
 #define m68k_read_memory_16(address) Memory_ReadW(address)
 #define m68k_read_memory_32(address) Memory_ReadD(address)

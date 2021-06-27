@@ -1,6 +1,6 @@
 #ifdef  __cplusplus
 extern "C" {
-#endif 
+#endif
 
 #include "common.h"
 #include "fileio.h"
@@ -15,7 +15,7 @@ extern "C" {
 #include "winui.h"
 #include "../x68k/m68000.h" // xxx perhaps not needed
 #include "../m68000/m68000.h"
-#include "../x68k/memory.h"
+#include "../x68k/x68kmemory.h"
 #include "mfp.h"
 #include "opm.h"
 #include "bg.h"
@@ -91,6 +91,9 @@ DWORD skippedframes = 0;
 static int ClkUsed = 0;
 static int FrameSkipCount = 0;
 static int FrameSkipQueue = 0;
+
+static DWORD old_ram_size = 0;
+static int old_clkdiv = 0;
 
 #ifdef __cplusplus
 };
@@ -169,7 +172,7 @@ WinX68k_LoadROMs(void)
 
 	for (fp = 0, i = 0; fp == 0 && i < NELEMENTS(BIOSFILE); ++i) {
 		fp = File_OpenCurDir((char *)BIOSFILE[i]);
-		printf("fp:%d (%s)\n",fp,(char *)BIOSFILE[i]);
+		p6logd("fp:%d (%s)\n",fp,(char *)BIOSFILE[i]);
 	}
 
 	if (fp == 0) {
@@ -228,12 +231,11 @@ WinX68k_Reset(void)
 {
 	OPM_Reset();
 
-	#ifdef CYCLONE
-		m68000_reset();
+#if defined (HAVE_CYCLONE)
+	m68000_reset();
 	m68000_set_reg(M68K_A7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
 	m68000_set_reg(M68K_PC, (IPL[0x30005]<<24)|(IPL[0x30004]<<16)|(IPL[0x30007]<<8)|IPL[0x30006]);
-
-	#else
+#elif defined (HAVE_C68K)
 	C68k_Reset(&C68K);
 /*
 	C68k_Set_Reg(&C68K, C68K_A7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
@@ -241,7 +243,7 @@ WinX68k_Reset(void)
 */
 	C68k_Set_AReg(&C68K, 7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
 	C68k_Set_PC(&C68K, (IPL[0x30005]<<24)|(IPL[0x30004]<<16)|(IPL[0x30007]<<8)|IPL[0x30006]);
-#endif
+#endif /* HAVE_C68K */
 
 	Memory_Init();
 	CRTC_Init();
@@ -272,6 +274,9 @@ WinX68k_Reset(void)
 	//CDROM_Init();
 	DSound_Play();
 
+	// add retro log
+	p6logd("Restarting PX68K...\n");
+
 	return TRUE;
 }
 
@@ -290,7 +295,7 @@ WinX68k_Init(void)
 		ZeroMemory(MEM, MEM_SIZE);
 
 	if (MEM && FONT && IPL) {
-	  	m68000_init();  
+	  	m68000_init();
 		return TRUE;
 	} else
 		return FALSE;
@@ -325,6 +330,14 @@ void WinX68k_Exec(void)
 	int KeyIntCnt = 0, MouseIntCnt = 0;
 	DWORD t_start = timeGetTime(), t_end;
 
+	if(!(Memory_ReadD(0xed0008)==Config.ram_size)){
+		Memory_WriteB(0xe8e00d, 0x31);             // SRAM write permission
+		Memory_WriteD(0xed0008, Config.ram_size);         // Define RAM amount
+	}
+
+	Joystick_Update(FALSE, -1, 0);
+	Joystick_Update(FALSE, -1, 1);
+
 	if ( Config.FrameRate != 7 ) {
 		DispFrame = (DispFrame+1)%Config.FrameRate;
 	} else {				// Auto Frame Skip
@@ -347,20 +360,27 @@ void WinX68k_Exec(void)
 	vline = 0;
 	clk_count = -ICount;
 	clk_total = (CRTC_Regs[0x29] & 0x10) ? VSYNC_HIGH : VSYNC_NORM;
-	if (Config.XVIMode == 1) {
-		clk_total = (clk_total*16)/10;
-		clkdiv = 16;
-	} else if (Config.XVIMode == 2) {
-		clk_total = (clk_total*24)/10;
-		clkdiv = 24;
 
-	}else if (Config.XVIMode == 3) {
-		clk_total = (clk_total*24)/10;
-		clkdiv = 24;
+	clk_total = (clk_total*Config.clockmhz)/10;
+	clkdiv = Config.clockmhz;
 
-	}else {
-		clkdiv = 10;
+//	if (Config.XVIMode == 1) {
+//		clk_total = (clk_total*16)/10;
+//		clkdiv = 16;
+//	} else if (Config.XVIMode == 2) {
+//		clk_total = (clk_total*24)/10;
+//		clkdiv = 24;
+//	} else {
+//		clkdiv = 10;
+//	}
+
+	if(clkdiv != old_clkdiv || Config.ram_size != old_ram_size){
+		p6logd("CPU Clock: %d%s\n",clkdiv,"MHz");
+		p6logd("RAM Size: %ld%s\n",Config.ram_size/1000000,"MB");
+		old_clkdiv = clkdiv;
+		old_ram_size = Config.ram_size;
 	}
+
 	ICount += clk_total;
 	clk_next = (clk_total/VLINE_TOTAL);
 	hsync = 1;
@@ -384,9 +404,9 @@ void WinX68k_Exec(void)
 					MFP_Int(9);
 			} else {
 				if ( CRTC_VEND>=VLINE_TOTAL ) {
-					if ( (long)vline==(CRTC_VEND-VLINE_TOTAL) ) MFP_Int(9);		// Is it "exciting hour"? （TOTAL<VEND）
+					if ( (long)vline==(CRTC_VEND-VLINE_TOTAL) ) MFP_Int(9);		// Is it Exciting Hour? （TOTAL<VEND）
 				} else {
-					if ( (long)vline==(VLINE_TOTAL-1) ) MFP_Int(9);				// It must be a "crazy climber"?
+					if ( (long)vline==(VLINE_TOTAL-1) ) MFP_Int(9);				// Is it Crazy Climber?
 				}
 			}
 		}
@@ -417,31 +437,31 @@ void WinX68k_Exec(void)
 				  fprintf(fp, "A0:%08X A1:%08X A2:%08X A3:%08X A4:%08X A5:%08X A6:%08X A7:%08X SR:%04X\n", C68K.A[0], C68K.A[1], C68K.A[2], C68K.A[3], C68K.A[4], C68K.A[5], C68K.A[6], C68K.A[7], C68k_Get_Reg(&C68K, C68K_SR) >> 8/* regs.sr_high*/);
 					fprintf(fp, "<%04X> (%08X ->) %08X : %s\n", Memory_ReadW(C68k_Get_Reg(&C68K, C68K_PC)), oldpc, C68k_Get_Reg(&C68K, C68K_PC), buf);
 				}
-	#ifdef CYCLONE
-	oldpc = m68000_get_reg(M68K_PC);
+#if defined (HAVE_CYCLONE)
+				oldpc = m68000_get_reg(M68K_PC);
 				//* C68KICount = 1;
 				m68000_execute(1);
-	#else
+#elif defined (HAVE_C68K)
 				oldpc = C68k_Get_Reg(&C68K, C68K_PC);
 //				C68K.ICount = 1;
 //				C68k_Exec(&C68K, C68K.ICount);
 				C68k_Exec(&C68K, 1);
-#endif
+#endif /* HAVE_C68K */
 			}
 			fclose(fp);
 			usedclk = clk_line = HSYNC_CLK;
 			clk_count = clk_next;
 		}
 		else
-#endif
+#endif /* WIN68DEBUG */
 		{
 //			C68K.ICount = n;
 //			C68k_Exec(&C68K, C68K.ICount);
-	#ifdef CYCLONE
+#if defined (HAVE_CYCLONE)
 			m68000_execute(n);
-	#else
+#elif defined (HAVE_C68K)
 			C68k_Exec(&C68K, n);
-	#endif
+#endif /* HAVE_C68K */
 			m = (n-m68000_ICountBk);
 //			m = (n-C68K.ICount-m68000_ICountBk);			// clockspeed progress
 			ClkUsed += m*10;
@@ -518,8 +538,6 @@ void WinX68k_Exec(void)
 		}
 	}
 
-	Joystick_Update(FALSE, -1);
-
 	FDD_SetFDInt();
 	if ( !DispFrame )
 		WinDraw_Draw();
@@ -541,8 +559,8 @@ extern "C" {
 #include "libretro.h"
 
 extern retro_input_state_t input_state_cb;
-extern char Core_Key_Sate[512];
-extern char Core_old_Key_Sate[512];
+extern char Core_Key_State[512];
+extern char Core_old_Key_State[512];
 
 int mb1=0,mb2=0;
 extern int retrow,retroh,CHANGEAV;
@@ -553,7 +571,7 @@ enum {menu_out, menu_enter, menu_in};
 int menu_mode = menu_out;
 #ifdef  __cplusplus
 };
-#endif 
+#endif
 extern "C" int pmain(int argc, char *argv[])
 {
 
@@ -578,7 +596,7 @@ extern "C" int pmain(int argc, char *argv[])
 
 	dosio_init();
 	file_setcd(winx68k_dir);
-	puts(winx68k_dir);
+	p6logd("%s\n", winx68k_dir);
 
 	LoadConfig();
 
@@ -667,20 +685,25 @@ extern "C" int pmain(int argc, char *argv[])
 		case 2:
 			strcpy(Config.FDDImage[0], argv[1]);
 			break;
+		case 0:
+			// start menu when running without content
+			menu_mode = menu_enter;
 		}
 	}
 
 	FDD_SetFD(0, Config.FDDImage[0], 0);
 	FDD_SetFD(1, Config.FDDImage[1], 0);
 
+	return 1;
+
 }
 
 #define KEYP(a,b) {\
-	if(Core_Key_Sate[a] && Core_Key_Sate[a]!=Core_old_Key_Sate[a]  )\
+	if(Core_Key_State[a] && Core_Key_State[a]!=Core_old_Key_State[a]  )\
 		send_keycode(b, 2);\
-	else if ( !Core_Key_Sate[a] && Core_Key_Sate[a]!=Core_old_Key_Sate[a]  )\
+	else if ( !Core_Key_State[a] && Core_Key_State[a]!=Core_old_Key_State[a]  )\
 		send_keycode(b, 1);\
-}	
+}
 
 extern "C" void handle_retrok(){
 
@@ -688,25 +711,26 @@ extern "C" void handle_retrok(){
 	int key_shift,key_control,key_alt;
 
 	/* SHIFT STATE */
-	if ((Core_Key_Sate[RETROK_LSHIFT]) || (Core_Key_Sate[RETROK_RSHIFT]))
+	if ((Core_Key_State[RETROK_LSHIFT]) || (Core_Key_State[RETROK_RSHIFT]))
 		key_shift = 1;
 	else
 		key_shift = 0;
 
 	/* CONTROL STATE */
-	if ((Core_Key_Sate[RETROK_LCTRL]) || (Core_Key_Sate[RETROK_RCTRL]))
+	if ((Core_Key_State[RETROK_LCTRL]) || (Core_Key_State[RETROK_RCTRL]))
 		key_control = 1;
 	else
 		key_control = 0;
 
 	/* ALT STATE */
-	if ((Core_Key_Sate[RETROK_LALT]) || (Core_Key_Sate[RETROK_RALT]))
+	if ((Core_Key_State[RETROK_LALT]) || (Core_Key_State[RETROK_RALT]))
 		key_alt = 1;
 	else
 		key_alt = 0;
 #endif
 
-	if(Core_Key_Sate[RETROK_F12] && Core_Key_Sate[RETROK_F12]!=Core_old_Key_Sate[RETROK_F12]  )
+	if(Core_Key_State[RETROK_F12] && Core_Key_State[RETROK_F12]!=Core_old_Key_State[RETROK_F12]  )
+	{
 		if (menu_mode == menu_out) {
 			oldrw=retrow;oldrh=retroh;
 			retroh=600;retrow=800;
@@ -719,9 +743,10 @@ extern "C" void handle_retrok(){
 			DSound_Play();
 			menu_mode = menu_out;
 		}
+	}
 
 #ifdef WIN68DEBUG
-	if(Core_Key_Sate[RETROK_F11] && Core_Key_Sate[RETROK_F11]!=Core_old_Key_Sate[RETROK_F11]  )
+	if(Core_Key_State[RETROK_F11] && Core_Key_State[RETROK_F11]!=Core_old_Key_State[RETROK_F11]  )
 		if (i == RETROK_F11) {
 			traceflag ^= 1;
 			printf("trace %s\n", (traceflag)?"on":"off");
@@ -734,8 +759,7 @@ extern "C" void handle_retrok(){
 		KEYP(RETROK_0+i,0x1+i);
 	KEYP(RETROK_0,0xb);
 	KEYP(RETROK_MINUS,0xc);
-	KEYP(RETROK_QUOTE,0xd);
-	KEYP(RETROK_BACKSLASH,0xe);
+	KEYP(RETROK_QUOTE,0x28); // colon :
 	KEYP(RETROK_BACKSPACE,0xf);
 
 	KEYP(RETROK_TAB,0x10);
@@ -752,6 +776,7 @@ extern "C" void handle_retrok(){
 	KEYP(RETROK_BACKQUOTE,0x1B);
 	KEYP(RETROK_LEFTBRACKET,0x1C);
 	KEYP(RETROK_RETURN,0x1d);
+	KEYP(RETROK_EQUALS,0xd); // caret ^
 
 	KEYP(RETROK_a,0x1e);
 	KEYP(RETROK_s,0x1f);
@@ -762,8 +787,8 @@ extern "C" void handle_retrok(){
 	KEYP(RETROK_j,0x24);
 	KEYP(RETROK_k,0x25);
 	KEYP(RETROK_l,0x26);
-	KEYP(RETROK_PLUS,0x27);
-	KEYP(RETROK_SEMICOLON,0x28);
+	KEYP(RETROK_SEMICOLON,0x27);
+	KEYP(RETROK_BACKSLASH,0xe); // Yen symbol ¥
 	KEYP(RETROK_RIGHTBRACKET,0x29);
 
 	KEYP(RETROK_z,0x2a);
@@ -776,7 +801,7 @@ extern "C" void handle_retrok(){
 	KEYP(RETROK_COMMA,0x31);
 	KEYP(RETROK_PERIOD,0x32);
 	KEYP(RETROK_SLASH,0x33);
-	KEYP(RETROK_LESS,0x34); //FIXME: VK_EOM_102 0x34 [\_]
+	KEYP(RETROK_0,0x34); // underquote _ as shift+0 which was empty, Japanese chars can't overlap as we're not using them
 
 	KEYP(RETROK_SPACE,0x35);
 	KEYP(RETROK_HOME,0x36);
@@ -809,22 +834,28 @@ extern "C" void handle_retrok(){
 	//KEYP(RETROK_COMMA,0x50);
 	KEYP(RETROK_KP_PERIOD,0x51);
 
-	KEYP(RETROK_PRINT,0x52);
-	KEYP(RETROK_SCROLLOCK,0x53);
-	KEYP(RETROK_PAUSE,0x54);
+	KEYP(RETROK_PRINT,0x52); //symbol input (kigou)
+	KEYP(RETROK_SCROLLOCK,0x53); //registration (touroku)
+	KEYP(RETROK_F11,0x54); //help
 //	KEYP(RETROK_MENU,0x55); //xf1
 //	KEYP(RETROK_KP_PERIOD,0x56); //xf2
 //	KEYP(RETROK_KP_PERIOD,0x57); //xf3
-//	KEYP(RETROK_KP_PERIOD,0x58); //xf4 
+
+	// only process kb_to_joypad map when its not zero, else button is used as joypad select mode
+	if (Config.joy1_select_mapping)
+		KEYP(RETROK_XFX, Config.joy1_select_mapping);
+
+//	KEYP(RETROK_KP_PERIOD,0x58); //xf4
 //	KEYP(RETROK_KP_PERIOD,0x59); //xf5
-//	KEYP(RETROK_KP_PERIOD,0x5a);
-//	KEYP(RETROK_KP_PERIOD,0x5b);
-//	KEYP(RETROK_KP_PERIOD,0x5c);
+//	KEYP(RETROK_KP_PERIOD,0x5a); //kana
+//	KEYP(RETROK_KP_PERIOD,0x5b); //romaji
+//	KEYP(RETROK_KP_PERIOD,0x5c); //input by codes
 	KEYP(RETROK_CAPSLOCK,0x5d);
 	KEYP(RETROK_INSERT,0x5e);
 //	KEYP(RETROK_KP_PERIOD,0x5f);
 //	KEYP(RETROK_KP_PERIOD,0x60);
 	KEYP(RETROK_BREAK,0x61); //break
+	KEYP(RETROK_PAUSE,0x61); //break (allow shift+break combo)
 //	KEYP(RETROK_KP_PERIOD,0x62); //copy
 
 	for(i=0;i<10;i++)
@@ -874,9 +905,9 @@ extern "C" void exec_app_retro(){
 
 		int mouse_l    = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
 		int mouse_r    = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
-		      
+
   	        if(mbL==0 && mouse_l){
-      			mbL=1;		
+      			mbL=1;
 			Mouse_Event(1,1.0,0);
 		}
    		else if(mbL==1 && !mouse_l)
@@ -885,7 +916,7 @@ extern "C" void exec_app_retro(){
 			Mouse_Event(1,0,0);
 		}
   	        if(mbR==0 && mouse_r){
-      			mbR=1;		
+      			mbR=1;
 			Mouse_Event(2,1.0,0);
 		}
    		else if(mbR==1 && !mouse_r)
@@ -897,17 +928,40 @@ extern "C" void exec_app_retro(){
   		int i;
 
    		for(i=0;i<320;i++)
-      			Core_Key_Sate[i]=input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0,i) ? 0x80: 0;
+      			Core_Key_State[i]=input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0,i) ? 0x80: 0;
 
-   		if(memcmp( Core_Key_Sate,Core_old_Key_Sate , sizeof(Core_Key_Sate) ) )
+      	Core_Key_State[RETROK_XFX] = 0;
+
+   		if (input_state_cb(0, RETRO_DEVICE_JOYPAD,0, RETRO_DEVICE_ID_JOYPAD_L2))	//Joypad Key for Menu
+				Core_Key_State[RETROK_F12] = 0x80;
+
+		if (Config.joy1_select_mapping)
+			if (input_state_cb(0, RETRO_DEVICE_JOYPAD,0, RETRO_DEVICE_ID_JOYPAD_SELECT))	//Joypad Key for Mapping
+				Core_Key_State[RETROK_XFX] = 0x80;
+
+		if(memcmp( Core_Key_State,Core_old_Key_State , sizeof(Core_Key_State) ) )
 			handle_retrok();
 
-   		memcpy(Core_old_Key_Sate,Core_Key_Sate , sizeof(Core_Key_Sate) );
+   		memcpy(Core_old_Key_State,Core_Key_State , sizeof(Core_Key_State) );
 
 		if (menu_mode != menu_out) {
-			int ret; 
+			int ret;
 
-			Joystick_Update(TRUE, menu_key_down);
+			keyb_in = 0;
+			if (Core_Key_State[RETROK_RIGHT] || Core_Key_State[RETROK_PAGEDOWN])
+				keyb_in |= JOY_RIGHT;
+			if (Core_Key_State[RETROK_LEFT] || Core_Key_State[RETROK_PAGEUP])
+				keyb_in |= JOY_LEFT;
+			if (Core_Key_State[RETROK_UP])
+				keyb_in |= JOY_UP;
+			if (Core_Key_State[RETROK_DOWN])
+				keyb_in |= JOY_DOWN;
+			if (Core_Key_State[RETROK_z] || Core_Key_State[RETROK_RETURN])
+				keyb_in |= JOY_TRG1;
+			if (Core_Key_State[RETROK_x] || Core_Key_State[RETROK_BACKSPACE])
+				keyb_in |= JOY_TRG2;
+
+			Joystick_Update(TRUE, menu_key_down, 0);
 
 			ret = WinUI_Menu(menu_mode == menu_enter);
 			menu_mode = menu_in;

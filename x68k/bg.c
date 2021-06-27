@@ -12,7 +12,7 @@
 #include "bg.h"
 
 #include "m68000.h"
-#include "memory.h"
+#include <string.h>
 
 	BYTE	BG[0x8000];
 	BYTE	Sprite_Regs[0x800];

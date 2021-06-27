@@ -202,7 +202,7 @@ int WinDraw_Init(void)
 	WinDraw_Pal16G = 0x07e0;
 	WinDraw_Pal16B = 0x001f;
 
-	printf("R: %x, G: %x, B: %x\n", WinDraw_Pal16R, WinDraw_Pal16G, WinDraw_Pal16B);
+	p6logd("R: %x, G: %x, B: %x\n", WinDraw_Pal16R, WinDraw_Pal16G, WinDraw_Pal16B);
 
 	ScrBuf = malloc(800 * 600 * 2);
 
@@ -488,7 +488,7 @@ void WinDraw_DrawLine(void)
 	int opaq, ton=0, gon=0, bgon=0, tron=0, pron=0, tdrawed=0;
 
 if(VLINE==-1){
-	printf("%d %d\n",VLINE,VLINE);
+	p6logd("%d %d\n",VLINE,VLINE);
 	return;
 }
 	if (!TextDirtyLine[VLINE]) return;
@@ -1138,7 +1138,13 @@ int WinDraw_MenuInit(void)
 }
 
 #include "menu_str_sjis.txt"
-
+char menu_item_desc[][60] = {
+	"Reset / NMI reset / Quit",
+	"Change / Eject floppy 0",
+	"Change / Eject floppy 1",
+	"Change / Eject HDD 0",
+	"Change / Eject HDD 1"
+};
 
 void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 {
@@ -1148,7 +1154,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 // ソフトウェアキーボード描画時にset_sbp(kbd_buffer)されているので戻す
 
 	set_sbp(menu_buffer);
-	set_mfs(16);
+	set_mfs(Config.MenuFontSize ? 24 : 16);
 
 	// タイトル
 	if (scr_type == x68k) {
@@ -1161,7 +1167,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		draw_str(twaku3_str);
 
 		set_mcolor(0xffff);
-		set_mlocateC(1, 1);
+		set_mlocateC(2, 1);
 		sprintf(tmp, "%s%s", title_str, PX68KVERSTR);
 		draw_str(tmp);
 	} else {
@@ -1179,26 +1185,26 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 	// 真ん中
 	if (scr_type == x68k) {
 		set_mcolor(0xffff);
-		set_mlocate(3 * p6m.mfs / 2, 3.5 * p6m.mfs);
-		draw_str(waku_val_str[0]);
-		set_mlocate(17 * p6m.mfs / 2, 3.5 * p6m.mfs);
-		draw_str(waku_val_str[1]);
+		//set_mlocate(3 * p6m.mfs / 2, 3.5 * p6m.mfs);
+		//draw_str(waku_val_str[0]);
+		//set_mlocate(17 * p6m.mfs / 2, 3.5 * p6m.mfs);
+		//draw_str(waku_val_str[1]);
 
 		// 真ん中枠
 		set_mcolor(0xffe0); // yellow
 		set_mlocateC(1, 4);
 		draw_str(waku_str);
-		for (i = 5; i < 12; i++) {
+		for (i = 5; i < 10; i++) {
 			set_mlocateC(1, i);
 			draw_str(waku2_str);
 		}
-		set_mlocateC(1, 12);
+		set_mlocateC(1, 10);
 		draw_str(waku3_str);
 	}
 
 	// アイテム/キーワード
 	set_mcolor(0xffff);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 5; i++) {
 		set_mlocateC(3, 5 + i);
 		if (menu_state == ms_key && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x0);
@@ -1213,7 +1219,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 	// アイテム/現在値
 	set_mcolor(0xffff);
 	set_mbcolor(0x0);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 5; i++) {
 		if ((menu_state == ms_value || menu_state == ms_hwjoy_set)
 		    && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x0);
@@ -1241,11 +1247,13 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 				draw_str(" -- no disk --");
 			} else {
 				// 先頭のカレントディレクトリ名を表示しない
-				if (!strncmp(cur_dir_str, p, cur_dir_slen)) {
-					draw_str(p + cur_dir_slen);
-				} else {
-					draw_str(p);
-				}
+				char ptr[PATH_MAX];
+				if (!strncmp(cur_dir_str, p, cur_dir_slen))
+					strncpy(ptr, p + cur_dir_slen, sizeof(ptr));
+				else
+					strncpy(ptr, p, sizeof(ptr));
+				ptr[40] = '\0';
+				draw_str(ptr);
 			}
 		} else {
 			draw_str(menu_items[i + mkey_pos][mval_y[i + mkey_pos]]);
@@ -1256,25 +1264,25 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		// 下枠
 		set_mcolor(0x07ff); // cyan
 		set_mbcolor(0x0);
-		set_mlocateC(0, 13);
+		set_mlocateC(0, 11);
 		draw_str(swaku_str);
-		set_mlocateC(0, 14);
+		set_mlocateC(0, 12);
 		draw_str(swaku2_str);
-		set_mlocateC(0, 15);
-		draw_str(swaku2_str);
-		set_mlocateC(0, 16);
+		//set_mlocateC(0, 15);
+		//draw_str(swaku2_str);
+		set_mlocateC(0, 13);
 		draw_str(swaku3_str);
 	}
 
 	// キャプション
 	set_mcolor(0xffff);
 	set_mbcolor(0x0);
-	set_mlocateC(2, 14);
-	draw_str(item_cap[mkey_y]);
-	if (menu_state == ms_value) {
-		set_mlocateC(2, 15);
-		draw_str(item_cap2[mkey_y]);
-	}
+	set_mlocateC(2, 12);
+	draw_str(menu_item_desc[mkey_y]);
+	//if (menu_state == ms_value) {
+		//set_mlocateC(2, 15);
+		//draw_str(item_cap2[mkey_y]);
+	//}
 
 	videoBuffer=(unsigned short int *)menu_buffer;
 
@@ -1283,6 +1291,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 void WinDraw_DrawMenufile(struct menu_flist *mfl)
 {
 	int i;
+	char ptr[PATH_MAX];
 
 	// 下枠
 	//set_mcolor(0xf800); // red
@@ -1312,7 +1321,9 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 		// ディレクトリだったらファイル名を[]で囲う
 		set_mlocateC(3, i + 2);
 		if (mfl->type[i + mfl->ptr]) draw_str("[");
-		draw_str(mfl->name[i + mfl->ptr]);
+		strncpy(ptr, mfl->name[i + mfl->ptr], sizeof(ptr));
+		ptr[56] = '\0';
+		draw_str(ptr);
 		if (mfl->type[i + mfl->ptr]) draw_str("]");
 	}
 
